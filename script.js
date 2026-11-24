@@ -40,6 +40,7 @@ fetch("https://pokeapi.co/api/v2/pokemon?limit=12&offset=0")
 
             // Pokemon types container
             let types = document.createElement('div');
+            types.classList.add('types');
 
             // Get Pokemon types
             pokemonData.types.forEach(function(t){
@@ -56,15 +57,20 @@ fetch("https://pokeapi.co/api/v2/pokemon?limit=12&offset=0")
             // Add image to front
             front.appendChild(img);
 
-            // Add name and types to back
-            back.appendChild(name);
-            back.appendChild(types);
+            // Add name and types to front
+            front.appendChild(name);
+            front.appendChild(types);
+
+            // Add details to back
+            let details = document.createElement('p');
+            details.innerText = "Pokemon Details";
+            back.appendChild(details);
 
             // Add front and back to inner
             inner.appendChild(front);
             inner.appendChild(back);
 
-            // Add inner to outer card
+            // Add inner to outer
             flipCard.appendChild(inner);
 
             // Add card to main container
