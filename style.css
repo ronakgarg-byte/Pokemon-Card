@@ -55,17 +55,14 @@ body{
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 15px;
     gap: 10px;
+
+    transform: rotateY(0deg);
 }
 
-/* Back */
 .flip-card-back{
     background-color: #e8e8e8;
     transform: rotateY(180deg);
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
 /* Image */

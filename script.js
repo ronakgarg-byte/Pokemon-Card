@@ -6,13 +6,19 @@ fetch("https://pokeapi.co/api/v2/pokemon?limit=12&offset=0")
 })
 .then(function(data){
 
-    data.results.forEach(function(pokemon){
+    let promises = data.results.map(function(pokemon){
 
-        fetch(pokemon.url)
+        return fetch(pokemon.url)
         .then(function(response){
             return response.json();
-        })
-        .then(function(pokemonData){
+        });
+
+    });
+
+    Promise.all(promises)
+    .then(function(pokemonDataArray){
+
+        pokemonDataArray.forEach(function(pokemonData){
 
             // Outer card
             let flipCard = document.createElement('div');
@@ -61,7 +67,7 @@ fetch("https://pokeapi.co/api/v2/pokemon?limit=12&offset=0")
             front.appendChild(name);
             front.appendChild(types);
 
-            // Add details to back
+            // Back details
             let details = document.createElement('p');
             details.innerText = "Pokemon Details";
             back.appendChild(details);
@@ -76,6 +82,8 @@ fetch("https://pokeapi.co/api/v2/pokemon?limit=12&offset=0")
             // Add card to main container
             Card.appendChild(flipCard);
 
-        })
-    })
-})
+        });
+
+    });
+
+});
