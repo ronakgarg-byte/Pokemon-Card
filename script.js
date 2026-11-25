@@ -11,27 +11,59 @@ async function getPokemon() {
   let pokemonDataArray=await Promise.all(promises);
   console.log(pokemonDataArray);
 
-  pokemonDataArray.forEach(function(pokemonData){
-    let flipCard=document.createElement('div');
-    flipCard.classList.add('flip-card');
-    let img=document.createElement('img');
-    img.src=pokemonData.sprites.other['official-artwork'].front_default;
-    let name=document.createElement('h3');
-    name.innerText=pokemonData.name;
+ pokemonDataArray.forEach(function(pokemonData){
 
+    // Outer card
+    let flipCard = document.createElement('div');
+    flipCard.classList.add('flip-card');
+
+    // Inner card
+    let inner = document.createElement('div');
+    inner.classList.add('flip-card-inner');
+
+    // Front side
+    let front = document.createElement('div');
+    front.classList.add('flip-card-front');
+
+    // Back side
+    let back = document.createElement('div');
+    back.classList.add('flip-card-back');
+
+    // Image
+    let img = document.createElement('img');
+    img.src = pokemonData.sprites.other['official-artwork'].front_default;
+
+    // Name
+    let name = document.createElement('h3');
+    name.innerText = pokemonData.name;
+
+    // Speciality
     let speciality = document.createElement('p');
 
     speciality.innerText = pokemonData.abilities
-        .map(function(a) {
+        .map(function(a){
             return a.ability.name;
         })
         .join(', ');
-    flipCard.appendChild(img);
-    flipCard.appendChild(name);
-        flipCard.appendChild(speciality);
 
+    // Add image and name to front
+    front.appendChild(img);
+    front.appendChild(name);
+
+    // Add speciality to back
+    front.appendChild(speciality);
+
+    // Add front and back to inner
+    inner.appendChild(front);
+    inner.appendChild(back);
+
+    // Add inner to outer
+    flipCard.appendChild(inner);
+
+    // Add card to main container
     Card.appendChild(flipCard);
-    })
+
+});
 }
 getPokemon();
 
