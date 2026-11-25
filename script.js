@@ -2,6 +2,9 @@ let Card = document.querySelector('.card');
 let filterType = document.querySelector('#filterType');
 
 let pokemonDataArray = [];
+let limit=20;
+ let offset=0;
+ let url="https://pokeapi.co/api/v2/pokemon?limit="+ limit+"&offset="+offset;
 
 async function getPokemon(url) {
 
@@ -138,4 +141,4 @@ filterType.addEventListener('change', function(){
 });
 
 
-getPokemon("https://pokeapi.co/api/v2/pokemon?limit=20&offset=0");
+getPokemon(url);
