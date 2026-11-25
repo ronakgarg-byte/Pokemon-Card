@@ -1,10 +1,12 @@
+
 let Card = document.querySelector('.card');
 let filterType = document.querySelector('#filterType');
 
 let pokemonDataArray = [];
-let limit=20;
- let offset=0;
- let url="https://pokeapi.co/api/v2/pokemon?limit="+ limit+"&offset="+offset;
+let limit = 20;
+let offset = 0;
+
+let url = "https://pokeapi.co/api/v2/pokemon?limit=" + limit + "&offset=" + offset;
 
 async function getPokemon(url) {
 
@@ -57,6 +59,9 @@ function showPokemon(pokemonList) {
 
     Card.innerHTML = "";
 
+    // Create DocumentFragment
+    let fragment = document.createDocumentFragment();
+
     pokemonList.forEach(function(pokemonData){
 
         // Outer card
@@ -106,10 +111,13 @@ function showPokemon(pokemonList) {
         // Add inner to outer
         flipCard.appendChild(inner);
 
-        // Add card to main container
-        Card.appendChild(flipCard);
+        // Add outer card to fragment
+        fragment.appendChild(flipCard);
 
     });
+
+    // Append all cards together
+    Card.appendChild(fragment);
 
 }
 
