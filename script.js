@@ -1,89 +1,123 @@
 let Card = document.querySelector('.card');
-
-fetch("https://pokeapi.co/api/v2/pokemon?limit=12&offset=0")
-.then(function(response){
-    return response.json();
-})
-.then(function(data){
-
-    let promises = data.results.map(function(pokemon){
-
-        return fetch(pokemon.url)
-        .then(function(response){
-            return response.json();
-        });
-
+async function getPokemon() {
+    const response= await fetch("https://pokeapi.co/api/v2/pokemon?limit=20&offset=0");
+    const data= await response.json();
+    // console.log(data);
+    let promises =data.results.map(async function(pokemon){
+        let response=await fetch(pokemon.url);
+        let pokemonData=await response.json();
+        return pokemonData;
     });
+  let pokemonDataArray=await Promise.all(promises);
+  console.log(pokemonDataArray);
 
-    Promise.all(promises)
-    .then(function(pokemonDataArray){
+  pokemonDataArray.forEach(function(pokemonData){
+    let flipCard=document.createElement('div');
+    flipCard.classList.add('flip-card');
+    let img=document.createElement('img');
+    img.src=pokemonData.sprites.other['official-artwork'].front_default;
+    let name=document.createElement('h3');
+    name.innerText=pokemonData.name;
 
-        pokemonDataArray.forEach(function(pokemonData){
+    let speciality = document.createElement('p');
 
-            // Outer card
-            let flipCard = document.createElement('div');
-            flipCard.classList.add('flip-card');
+    speciality.innerText = pokemonData.abilities
+        .map(function(a) {
+            return a.ability.name;
+        })
+        .join(', ');
+    flipCard.appendChild(img);
+    flipCard.appendChild(name);
+        flipCard.appendChild(speciality);
 
-            // Inner card
-            let inner = document.createElement('div');
-            inner.classList.add('flip-card-inner');
+    Card.appendChild(flipCard);
+    })
+}
+getPokemon();
 
-            // Front side
-            let front = document.createElement('div');
-            front.classList.add('flip-card-front');
+// .then(function(response){
+//     return response.json();
+// })
+// .then(function(data){
 
-            // Back side
-            let back = document.createElement('div');
-            back.classList.add('flip-card-back');
+//     let promises = data.results.map(function(pokemon){
 
-            // Pokemon image
-            let img = document.createElement('img');
-            img.src = pokemonData.sprites.other['official-artwork'].front_default;
+//         return fetch(pokemon.url)
+//         .then(function(response){
+//             return response.json();
+//         });
 
-            // Pokemon name
-            let name = document.createElement('h3');
-            name.innerText = pokemonData.name;
+//     });
 
-            // Pokemon types container
-            let types = document.createElement('div');
-            types.classList.add('types');
+//     Promise.all(promises)
+//     .then(function(pokemonDataArray){
 
-            // Get Pokemon types
-            pokemonData.types.forEach(function(t){
+//         pokemonDataArray.forEach(function(pokemonData){
 
-                let type = document.createElement('p');
-                type.innerText = t.type.name;
+//             // Outer card
+//             let flipCard = document.createElement('div');
+//             flipCard.classList.add('flip-card');
 
-                type.classList.add('type');
-                type.classList.add(t.type.name);
+//             // Inner card
+//             let inner = document.createElement('div');
+//             inner.classList.add('flip-card-inner');
 
-                types.appendChild(type);
-            });
+//             // Front side
+//             let front = document.createElement('div');
+//             front.classList.add('flip-card-front');
 
-            // Add image to front
-            front.appendChild(img);
+//             // Back side
+//             let back = document.createElement('div');
+//             back.classList.add('flip-card-back');
 
-            // Add name and types to front
-            front.appendChild(name);
-            front.appendChild(types);
+//             // Pokemon image
+//             let img = document.createElement('img');
+//             img.src = pokemonData.sprites.other['official-artwork'].front_default;
 
-            // Back details
-            let details = document.createElement('p');
-            details.innerText = "Pokemon Details";
-            back.appendChild(details);
+//             // Pokemon name
+//             let name = document.createElement('h3');
+//             name.innerText = pokemonData.name;
 
-            // Add front and back to inner
-            inner.appendChild(front);
-            inner.appendChild(back);
+//             // Pokemon types container
+//             let types = document.createElement('div');
+//             types.classList.add('types');
 
-            // Add inner to outer
-            flipCard.appendChild(inner);
+//             // Get Pokemon types
+//             pokemonData.types.forEach(function(t){
 
-            // Add card to main container
-            Card.appendChild(flipCard);
+//                 let type = document.createElement('p');
+//                 type.innerText = t.type.name;
 
-        });
+//                 type.classList.add('type');
+//                 type.classList.add(t.type.name);
 
-    });
+//                 types.appendChild(type);
+//             });
 
-});
+//             // Add image to front
+//             front.appendChild(img);
+
+//             // Add name and types to front
+//             front.appendChild(name);
+//             front.appendChild(types);
+
+//             // Back details
+//             let details = document.createElement('p');
+//             details.innerText = "Pokemon Details";
+//             back.appendChild(details);
+
+//             // Add front and back to inner
+//             inner.appendChild(front);
+//             inner.appendChild(back);
+
+//             // Add inner to outer
+//             flipCard.appendChild(inner);
+
+//             // Add card to main container
+//             Card.appendChild(flipCard);
+
+//         });
+
+//     });
+
+// });
