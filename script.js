@@ -62,13 +62,13 @@ async function getPokemon(url) {
     });
 
 
-    // Display Pokemon
+    // Display all Pokemon
     showPokemon(pokemonDataArray);
 
 }
 
 
-// Load more button
+// Load More button
 loadBtn.addEventListener('click', function(){
 
     offset = offset + limit;
@@ -106,13 +106,24 @@ function showPokemon(pokemonList) {
         let back = document.createElement('div');
         back.classList.add('flip-card-back');
 
+
         // Image
         let img = document.createElement('img');
         img.src = pokemonData.sprites.other['official-artwork'].front_default;
 
+
         // Name
         let name = document.createElement('h3');
         name.innerText = pokemonData.name;
+
+
+        // Types
+        let types = document.createElement('p');
+
+        types.innerText = pokemonData.types.map(function(t){
+            return t.type.name;
+        }).join(', ');
+
 
         // Speciality / abilities
         let speciality = document.createElement('p');
@@ -124,9 +135,10 @@ function showPokemon(pokemonList) {
             .join(', ');
 
 
-        // Add image and name to front
+        // Add image, name and types to front
         front.appendChild(img);
         front.appendChild(name);
+        front.appendChild(types);
 
 
         // Add speciality to back
