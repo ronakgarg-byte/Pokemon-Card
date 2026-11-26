@@ -2,12 +2,33 @@
 let Card = document.querySelector('.card');
 let filterType = document.querySelector('#filterType');
 let loadBtn = document.querySelector('#load');
+let searchPokemon = document.querySelector('#searchPokemon');
 
 let pokemonDataArray = [];
 let limit = 20;
 let offset = 0;
 
 let url = "https://pokeapi.co/api/v2/pokemon?limit=" + limit + "&offset=" + offset;
+
+
+// Fetch Types from Type API
+async function getTypes() {
+
+    let response = await fetch("https://pokeapi.co/api/v2/type/");
+    let data = await response.json();
+
+    data.results.forEach(function(type){
+
+        let option = document.createElement('option');
+
+        option.value = type.name;
+        option.innerText = type.name;
+
+        filterType.appendChild(option);
+
+    });
+
+}
 
 
 // Fetch Pokemon
@@ -28,42 +49,7 @@ async function getPokemon(url) {
 
     pokemonDataArray = pokemonDataArray.concat(newPokemon);
 
-
-    // Get all types
-    let allTypes = [];
-
-    pokemonDataArray.forEach(function(pokemonData){
-
-        pokemonData.types.forEach(function(t){
-            allTypes.push(t.type.name);
-        });
-
-    });
-
-
-    // Remove duplicate types
-    let uniqueTypes = [...new Set(allTypes)];
-
-
-    // Add types to dropdown
-    uniqueTypes.forEach(function(type){
-
-        if(!Array.from(filterType.options).some(function(option){
-            return option.value === type;
-        })) {
-
-            let option = document.createElement('option');
-            option.value = type;
-            option.innerText = type;
-
-            filterType.appendChild(option);
-        }
-
-    });
-
-
-    // Display all Pokemon
-    showPokemon(pokemonDataArray);
+    filterPokemon();
 
 }
 
@@ -85,7 +71,6 @@ function showPokemon(pokemonList) {
 
     Card.innerHTML = "";
 
-    // Create DocumentFragment
     let fragment = document.createDocumentFragment();
 
     pokemonList.forEach(function(pokemonData){
@@ -120,15 +105,15 @@ function showPokemon(pokemonList) {
         // Types
         let types = document.createElement('p');
 
-        types.innerText = pokemonData.types.map(function(t){
+        types.innerText = "Type: " + pokemonData.types.map(function(t){
             return t.type.name;
         }).join(', ');
 
 
-        // Speciality / abilities
+        // Abilities
         let speciality = document.createElement('p');
 
-        speciality.innerText = pokemonData.abilities
+        speciality.innerText = "Abilities: " + pokemonData.abilities
             .map(function(a){
                 return a.ability.name;
             })
@@ -141,7 +126,7 @@ function showPokemon(pokemonList) {
         front.appendChild(types);
 
 
-        // Add speciality to back
+        // Add abilities to back
         back.appendChild(speciality);
 
 
@@ -160,38 +145,55 @@ function showPokemon(pokemonList) {
     });
 
 
-    // Append all cards together
     Card.appendChild(fragment);
 
 }
 
 
-// Filter by type
-filterType.addEventListener('change', function(){
+// Filter Pokemon by Type + Name
+function filterPokemon() {
 
     let selectedType = filterType.value;
+    let searchValue = searchPokemon.value.toLowerCase().trim();
 
-    if(selectedType === "all") {
+    let filteredPokemon = pokemonDataArray.filter(function(pokemonData){
 
-        showPokemon(pokemonDataArray);
-
-    }
-    else {
-
-        let filteredPokemon = pokemonDataArray.filter(function(pokemonData){
-
-            return pokemonData.types.some(function(t){
-                return t.type.name === selectedType;
-            });
-
+        // Check Type
+        let matchType = selectedType === "all" || pokemonData.types.some(function(t){
+            return t.type.name === selectedType;
         });
 
-        showPokemon(filteredPokemon);
 
-    }
+        // Check Name
+        let matchName = pokemonData.name.toLowerCase().includes(searchValue);
+
+
+        // Both conditions
+        return matchType && matchName;
+
+    });
+
+    showPokemon(filteredPokemon);
+
+}
+
+
+// Type filter event
+filterType.addEventListener('change', function(){
+
+    filterPokemon();
 
 });
 
 
-// Initial API call
+// Name search event
+searchPokemon.addEventListener('input', function(){
+
+    filterPokemon();
+
+});
+
+
+// Initial calls
+getTypes();
 getPokemon(url);
