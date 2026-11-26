@@ -66,5 +66,8 @@
 }
 #load{
     margin-top: 30px;
-    position: relative;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    /* place-items: left; */
 }
