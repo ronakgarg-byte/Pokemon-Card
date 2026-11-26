@@ -64,3 +64,7 @@
 .flip-card-back p {
     text-transform: capitalize;
 }
+#load{
+    margin-top: 30px;
+    position: relative;
+}

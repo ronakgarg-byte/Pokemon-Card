@@ -1,6 +1,7 @@
 
 let Card = document.querySelector('.card');
 let filterType = document.querySelector('#filterType');
+let loadBtn = document.querySelector('#load');
 
 let pokemonDataArray = [];
 let limit = 20;
@@ -8,6 +9,8 @@ let offset = 0;
 
 let url = "https://pokeapi.co/api/v2/pokemon?limit=" + limit + "&offset=" + offset;
 
+
+// Fetch Pokemon
 async function getPokemon(url) {
 
     const response = await fetch(url);
@@ -21,7 +24,10 @@ async function getPokemon(url) {
         return pokemonData;
     });
 
-    pokemonDataArray = await Promise.all(promises);
+    let newPokemon = await Promise.all(promises);
+
+    pokemonDataArray = pokemonDataArray.concat(newPokemon);
+
 
     // Get all types
     let allTypes = [];
@@ -34,24 +40,44 @@ async function getPokemon(url) {
 
     });
 
+
     // Remove duplicate types
     let uniqueTypes = [...new Set(allTypes)];
+
 
     // Add types to dropdown
     uniqueTypes.forEach(function(type){
 
-        let option = document.createElement('option');
-        option.value = type;
-        option.innerText = type;
+        if(!Array.from(filterType.options).some(function(option){
+            return option.value === type;
+        })) {
 
-        filterType.appendChild(option);
+            let option = document.createElement('option');
+            option.value = type;
+            option.innerText = type;
+
+            filterType.appendChild(option);
+        }
 
     });
 
-    // Display all Pokemon initially
+
+    // Display Pokemon
     showPokemon(pokemonDataArray);
 
 }
+
+
+// Load more button
+loadBtn.addEventListener('click', function(){
+
+    offset = offset + limit;
+
+    url = "https://pokeapi.co/api/v2/pokemon?limit=" + limit + "&offset=" + offset;
+
+    getPokemon(url);
+
+});
 
 
 // Show Pokemon cards
@@ -97,24 +123,30 @@ function showPokemon(pokemonList) {
             })
             .join(', ');
 
+
         // Add image and name to front
         front.appendChild(img);
         front.appendChild(name);
 
+
         // Add speciality to back
-        front.appendChild(speciality);
+        back.appendChild(speciality);
+
 
         // Add front and back to inner
         inner.appendChild(front);
         inner.appendChild(back);
 
+
         // Add inner to outer
         flipCard.appendChild(inner);
 
-        // Add outer card to fragment
+
+        // Add outer to fragment
         fragment.appendChild(flipCard);
 
     });
+
 
     // Append all cards together
     Card.appendChild(fragment);
@@ -149,4 +181,5 @@ filterType.addEventListener('change', function(){
 });
 
 
+// Initial API call
 getPokemon(url);
